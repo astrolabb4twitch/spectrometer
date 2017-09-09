@@ -1,0 +1,165 @@
+<link href="/style.css" rel="stylesheet" type="text/css">
+
+
+<!-- Include meta tag to ensure proper rendering and touch zooming -->
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<!-- Include jQuery Mobile stylesheets -->
+<link rel="stylesheet" href="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css">
+
+<!-- Include the jQuery library -->
+<script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
+
+<!-- Include the jQuery Mobile library -->
+<script src="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+
+
+<!-- Include jqplt pour les graphiques -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqPlot/1.0.9/jquery.jqplot.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jqPlot/1.0.9/jquery.jqplot.js"></script>
+
+
+
+ <script src="/socket.io/socket.io.js"></script>
+ 
+   <script>
+			$(function() {	
+			
+			var labels = ["résultat", "valeurs référence"];	
+			var ticks = [];
+			<% data_led['led'].forEach(function(led, i) { %>
+			ticks.push([<%=i%>+1, "<%=led.couleur%>"]);
+			<% });%>
+						
+			var l0 = JSON.parse("<%=JSON.stringify(resultat)%>");
+            var l1 = JSON.parse("<%=JSON.stringify(valeur_ref)%>");
+			   console.log("l0 "+l0[0]);
+			   console.log("l1 "+l1[0]);
+			var plot1 = $.jqplot("chart1", [l0, l1], {
+            title: "Résultat d'analyse",
+            legend: { show: true,
+                      location: 'se',
+                      labels: labels,
+             
+             },
+            axes: {
+				xaxis: {
+					renderer:  $.jqplot.CategoryAxisRenderer,
+					ticks: ticks,					
+					label: 'Couleur'
+					
+				}
+            },     
+            seriesDefaults: {
+            
+                renderer: $.jqplot.BarRenderer,
+                     rendererOptions: {
+                        barPadding: 1,
+                        barMargin: 15,
+                        barDirection: 'vertical',
+                        barWidth: 50,
+                        smooth: true
+                    }, 
+                    pointLabels: { show: true },
+                   
+            }
+        });
+								
+			
+				var socket = io();
+				// On affiche une boîte de dialogue quand le serveur nous envoie un "message"
+			 
+				socket.on('luminosite', function(message) {
+					$("#lumiere").val(message);
+				});
+				socket.on('alerte', function(message) {
+					$.mobile.loading( "hide" );
+					alert(message);					
+				});
+				$("#moteur").on("slidestop", function(e, ui){            
+					socket.emit('moteur', $(this).val());           
+				});
+				$("#sauvegarde").on("click", function(){
+					  var $this = $( this ),
+					  theme = $this.jqmData( "theme" ) || $.mobile.loader.prototype.options.theme,
+					  textVisible = $this.jqmData( "textvisible" ) || $.mobile.loader.prototype.options.textVisible,
+					  textonly = !!$this.jqmData( "textonly" );
+					  html = $this.jqmData( "html" ) || "";
+					  $.mobile.loading( 'show', {
+						  textVisible: textVisible,
+						  theme: theme,
+						  textonly: textonly,
+						  html: html
+					  });
+					$( "#mon_formulaire" ).submit();
+				});
+				$('[id^=button_]').on("click", function(){
+							console.log("led allumée");
+							
+					});
+				
+            });
+   </script>
+   
+<h1>Spectrophotomètre</h1>
+<div id="container">
+	<h1>Choisissez votre longueur d'onde</h1>
+	<form id="mon_formulaire" action="/sauvegarde_led" data-ajax="false" method="post">
+		<div class="ui-grid-d">	    
+			<% data_led['led'].forEach(function(led, i) { %>
+				<div style="background-color: <%= led.hex %>; border: 2px solid grey;  padding: 5px;" class="ui-block-<%= String.fromCharCode(i+65).toLowerCase() %> >"
+					<label>Led :<%= led.couleur %></label>
+					<p><% if(i==numero){ %><%=connect %><% }else{%><%=connect2 %><%} %></p>
+				<!-- 	<button class="ui-btn" onclick="location.href=' <%= lien %> '">Led :<%= led.couleur %></button>  -->
+					<label for="couleur">Nom couleur:</label>
+					<input type="text" name="couleur" id="couleur" value="<%= led.couleur %>"  />
+					<label for="hex">code hexa:</label>
+					<input type="text" name="hex" id="hex" value="<%= led.hex %>"  />
+					<label for="lamba">Longueur onde:</label>
+					<input type="text" name="lamba" id="lamba" value="<%= led.lamba %>"  />
+					<label for="angle">angle du servo:</label>
+					<input type="text" name="angle" id="angle" value="<%= led.angle %>"  />
+					<label for="borne">Pin Mega:</label>
+					<input type="text" name="borne" id="borne" value="<%= led.borne %>"  />
+					<button type="button" id="button_<%= i %>" class="ui-btn" onclick="location.href='<%= lien %>/<%= i %>'"><% if(i==numero){ %><%=bouton%><% }else{%><%=bouton2%><%} %></button> 
+				</div>      
+			<% }); %>	
+		</div>	
+		<div class="ui-grid-b">	  
+			<div class="ui-block-a"> 
+				<button id="sauvegarde" class="ui-btn ui-btn-b show-page-loading-msg" data-textonly="true" data-textvisible="true" data-icon="arrow-r" data-html="<span class='ui-bar ui-overlay-a ui-corner-all'><img src='/logo.png' style='max-width:100%; max-height:100%;' /><h2>chargement en cours ...</h2></span>" data-iconpos="right">Sauvegarder les données LED</button> 
+			</div>
+			<div class="ui-block-b">
+				<button type="button"  data-theme="c" class"ui-btn" onclick="location.href='./analyse'" >lancer l'analyse</button>
+			</div>
+			<div class="ui-block-c">
+				<button type="button" class"ui-btn" onclick="location.href='./reboot'" >reboot</button>
+			</div>
+			</form>
+		</div>
+		<div class="ui-grid-a">
+			<div class="ui-block-a">
+				<button id="enregistrer_ref" type="button" onclick="location.href='./sauvegarde_resultat/1'" class="ui-btn ui-btn-b show-page-loading-msg" data-textonly="true" data-textvisible="true" data-icon="arrow-r" data-html="<span class='ui-bar ui-overlay-a ui-corner-all'><img src='/logo.png' style='max-width:100%; max-height:100%;' /><h2>enregistrement en cours ...</h2></span>" data-iconpos="right">enregistrer comme référence</button> 
+			</div>
+			<div class="ui-block-b">
+				<button id="enregistrer_analyse" type="button" onclick="location.href='./sauvegarde_resultat/2'" class="ui-btn ui-btn-b show-page-loading-msg" data-textonly="true" data-textvisible="true" data-icon="arrow-r" data-html="<span class='ui-bar ui-overlay-a ui-corner-all'><img src='/logo.png' style='max-width:100%; max-height:100%;' /><h2>enregistrement en cours ...</h2></span>" data-iconpos="right">enregistrer valeur analyse</button> 
+			</div>
+		</div>
+</div>
+
+
+<div id="container" data-role="fieldcontain">
+    <label for="name">Luminosité:</label>
+    <input type="text" name="name" id="lumiere" value=""  />
+</div>
+<div id="container" data-role="fieldcontain">
+	<label for="moteur">Input slider:</label>
+	<input type="range" name="moteur" id="moteur" value="0" min="0" max="180" />
+</div>
+<div id="container" data-role="fieldcontain">
+
+	<button id="afficher_analyse_precedente" type="button" onclick="location.href='./afficher_resultat'" class="ui-btn ui-btn-b show-page-loading-msg" data-textonly="true" data-textvisible="true" data-icon="arrow-r" data-html="<span class='ui-bar ui-overlay-a ui-corner-all'><img src='/logo.png' style='max-width:100%; max-height:100%;' /><h2>enregistrement en cours ...</h2></span>" data-iconpos="right">afficher analyse enregistrée</button> 
+	<div id="chart1" style="margin-top:20px; margin-left:20px; width:600px; height:400px;"></div>
+		
+</div>
+

@@ -1,0 +1,33 @@
+
+.bouton_1 {
+	width:200px;
+	height:200px;
+	background:#cc0000;
+	font:bold 13px Arial;
+	border-radius:50%;
+	border:none;
+	color:#fff;
+}
+.bouton_1:hover{
+	width:250px;
+	height:250px;
+}
+.bouton_1:active{
+	width:180px;
+	height:180px;
+
+}
+#container {
+
+text-align:center;
+}
+/*
+.ui-loader {
+  display:none !important;
+}
+.ui-icon-loading {
+    background:none !important;
+}
+*/
+
+</style>
