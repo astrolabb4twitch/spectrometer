@@ -1,7 +1,39 @@
-#LED Spectrometer
+# LED Spectrometer
 
-The Led spectrometer is an open-source project. The aim is to dectect molecules in liquid. This project is based on raspberry Pi commanded by an 5'' display. The Raspberry controls by an node.js server and his module : Johnny-five an arduino mega to control LED, servo and photoresistor. The datas are displayed in real-time on the screen.
+The Led spectrometer is an open-source project. The aim is to dectect molecules in liquid. This project is based on raspberry Pi commanded by an 5'' display screen. The Raspberry controls by an node.js server and his module : Johnny-five an arduino mega to control LED, servo and photoresistor. The datas are displayed in real-time on the screen.
 
-#Getting Started
+# Getting Started
 
+	## Prerequisites
 
+		### hardware
+* Raspberry Pi 3
+* 5'' HDMI display screen 
+* servomotor
+* breadboard (adafruit perma-proto for me)
+* LED (wave-length adapted for your search)
+
+		### installing
+* up-to-date raspbian
+* 5'' display screen
+	* `/boot/config.txt` 
+    device_tree=bcm2710-rpi-3-b.dtb 
+    dtoverlay=ads7846,penirq=22,speed=10000,penirq_pull=2,xohms=150
+    dtparam=spi=on
+    hdmi_group=2
+    hdmi_mode=1
+    hdmi_mode=87
+    hdmi_cvt 800 480 60 6 0 0 0
+	* touch screen settings
+    sudo apt-get install autoconf libx11-dev libxext-dev libxi-dev x11proto-input-dev
+    cd ~
+    wget http://github.com/downloads/tias/xinput_calibrator/xinput_calibrator-0.7.5.tar.gz
+    tar -zxvf xinput_calibrator-0.7.5.tar.gz
+    cd xinput_calibrator-0.7.5
+    ./configure
+    make
+    sudo make install
+    DISPLAY=:0.0  xinput_calibrator
+write values in `/etc/X11/xorg.conf.d/99-calibration.conf`
+    
+		
