@@ -1,1 +1,7 @@
-Voilà le fichier d'explication pour l'installation du spectrophotomètre
+#LED Spectrometer
+
+The Led spectrometer is an open-source project. The aim is to dectect molecules in liquid. This project is based on raspberry Pi commanded by an 5'' display. The Raspberry controls by an node.js server and his module : Johnny-five an arduino mega to control LED, servo and photoresistor. The datas are displayed in real-time on the screen.
+
+#Getting Started
+
+
