@@ -68,10 +68,19 @@ sudo forever-service install spectrometer --script /home/pi/Desktop/spectrometer
 
 sudo service spectrometer start
 
-* copy files and folder on Desktop
+* copy files and folder on Desktop : you must change on spectrometer.js file : photoresistor pin line 41, servomotor pin line 47
 
 * reboot
 
 	
-	# Running the tests
+	# ***Running the tests***
 
+* the screen on boot shows spectrometer home page. The servor uses Chromium in kiosk mode. You may connect with a browser to the IP raspberry : http://how.do.you.troll.biz/ 
+* Learn french language and push on `Lancer le programme `
+* you must set up :
+	* LED color
+	* angular measurement of servomotor : it's the angular value where the LED is in front of the cuvette.
+	* LED pin on the mega
+* push on `lancer l'analyse`
+* after page reboot, the values are showed at the bottom on the graphic.
+ 
