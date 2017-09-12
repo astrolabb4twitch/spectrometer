@@ -8,6 +8,7 @@ The Led spectrometer is an open-source project. The aim is to dectect molecules 
 
 		### hardware
 * Raspberry Pi 3
+* Arduino Mega
 * 5'' HDMI display screen 
 * servomotor
 * breadboard (adafruit perma-proto for me)
@@ -15,6 +16,10 @@ The Led spectrometer is an open-source project. The aim is to dectect molecules 
 
 		### installing
 * up-to-date raspbian
+* VNC servor : X11vnc
+   sudo apt-get update
+   sudo apt-get install x11vnc
+   x11vnc -storepasswd
 * 5'' display screen
 	* `/boot/config.txt` 
     device_tree=bcm2710-rpi-3-b.dtb 
@@ -35,5 +40,38 @@ The Led spectrometer is an open-source project. The aim is to dectect molecules 
     sudo make install
     DISPLAY=:0.0  xinput_calibrator
 write values in `/etc/X11/xorg.conf.d/99-calibration.conf`
-    
-		
+* install node.js    
+		* check version of node on your Pi : `node -v`
+		* check Pi caracteristcs : `uname -a` 
+		* you need the 4.2.1 for johnny-five
+    wget https://nodejs.org/dist/v4.2.1/node-v4.2.1-linux-armv7l.tar.xz
+    tar -xvf node-v4.2.1-linux-armv7l.tar.xz
+    cd node-v4.2.1-linux-armv7l
+    sudo cp -R * /usr/local/
+* install arduino IDE
+    sudo apt-get install arduino
+    arduino
+* install nodejs modules
+    sudo npm install johnny-five
+    sudo npm install express
+    sudo npm install ejs
+    sudo npm install socket.io
+* install firmware on arduinoMega : in IDE Arduino 
+
+npm install -g forever
+
+* Install forever-service : to start node.js on each boot on spectrometer.js 
+
+npm install -g forever-service
+
+sudo forever-service install spectrometer --script /home/pi/Desktop/spectrometer.js
+
+sudo service spectrometer start
+
+* copy files and folder on Desktop
+
+* reboot
+
+	
+	# Running the tests
+
